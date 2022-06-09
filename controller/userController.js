@@ -1,21 +1,10 @@
-const { User } = require("../model/model");
-const jwt = require("jsonwebtoken");
+import User from "../model/User";
+import bcrypt from "bcryptjs/dist/bcrypt";
 const userController = {
   getAllUser: async (req, res) => {
     try {
       const PAGE_SIZE = parseInt(req.query.pageSize) || 3;
       const page = parseInt(req.query.page) < 1 ? 1 : parseInt(req.query.page);
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        const isAdmin = await User.findById(id).permissions;
-        if (!isAdmin)
-          return res.status(403).json({
-            message: "Access permission error",
-          });
-      }
       if (!page) {
         const user = await User.find();
         res.status(200).json(user);
@@ -42,17 +31,6 @@ const userController = {
     try {
       const PAGE_SIZE = parseInt(req.query.pageSize) || 3;
       const page = parseInt(req.query.page) < 1 ? 1 : parseInt(req.query.page);
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        const isAdmin = await User.findById(id).permissions;
-        if (!isAdmin)
-          return res.status(403).json({
-            message: "Access permission error",
-          });
-      }
       const user = await User.find()
         .sort(res.query)
         .skip((page - 1) * PAGE_SIZE)
@@ -72,20 +50,15 @@ const userController = {
     }
   },
   addUser: async (req, res) => {
-    console.log(req.body);
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        const isAdmin = await User.findById(id).permissions;
-        if (!isAdmin)
-          return res.status(403).json({
-            message: "Access permission error",
-          });
-      }
-      const newUser = new User(req.body);
+      const salt = await bcrypt.salt(10);
+      const hashed = await bcrypt.hash(req.body.password, salt);
+      console.log(hashed);
+      const newUser = new User({
+        username: req.body.username,
+        password: hashed,
+        admin: req.body.admin,
+      });
       const saveUser = await newUser.save();
       res.status(200).json("Successful");
     } catch (error) {
@@ -94,17 +67,10 @@ const userController = {
   },
   getUser: async (req, res) => {
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        const isAdmin = await User.findById(id).permissions;
-        if (!isAdmin)
-          return res.status(403).json({
-            message: "Access permission error",
-          });
-      }
+      const nameUser = req.params.search_query;
+      User.findOne({
+        name: nameUser,
+      });
       await User.findById(req.params.id)
         .then((user) => {
           res.status(200).json(user);
@@ -118,21 +84,10 @@ const userController = {
   },
   updateUser: async (req, res) => {
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        const isAdmin = await User.findById(id).permissions;
-        if (!isAdmin)
-          return res.status(403).json({
-            message: "Access permission error",
-          });
-      }
       const id = req.params.id;
       const body = {
         password: req.body.password,
-        permissions: req.body.permissions,
+        admin: req.body.admin,
       };
       await User.findByIdAndUpdate(id, body, (err, doc, res) => {
         if (err) {
@@ -147,19 +102,7 @@ const userController = {
   },
 
   deleteUser: async (req, res) => {
-    // console.log(req.params.id);
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        const isAdmin = await User.findById(id).permissions;
-        if (!isAdmin)
-          return res.status(403).json({
-            message: "Access permission error",
-          });
-      }
       await User.findByIdAndDelete(req.params.id)
         .then(() => {
           res.status(200).json("Deleted successfully");
@@ -171,37 +114,6 @@ const userController = {
       res.status(500).json("Bad Request");
     }
   },
-
-  handleLogin: async (req, res, next) => {
-    try {
-      const user = await User.findOne({
-        username: req.body.username,
-        password: req.body.password,
-      });
-      if (user) {
-        const token = jwt.sign(
-          {
-            _id: user._id,
-            permissions: user.permissions,
-          },
-          "anhcuongdeptrai"
-        );
-        res.status(200).json({
-          message: "Successfuly",
-          token: token,
-        });
-        next();
-      } else {
-        return res.status(404).json({
-          message: "Tai khoan hoac mat khau khong chinh xac",
-        });
-      }
-    } catch (error) {
-      return res.status(500).json({
-        message: "Request time out",
-      });
-    }
-  },
 };
 
-module.exports = userController;
+export default userController;
