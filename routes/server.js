@@ -1,26 +1,30 @@
-import serverController from "../controller/serverController";
+import serverController from "../controller/serverController.js";
 import { Router } from "express";
-import middlewareController from "../controller/middlewareController";
-const router = Router();
-router.get(
+import middlewareController from "../controller/middlewareController.js";
+const routerServer = Router();
+routerServer.get(
   "/",
   middlewareController.verifyToken,
   serverController.getAllServer
 );
-router.post("/", middlewareController.verifyToken, serverController.addServer);
-router.get(
+routerServer.post(
+  "/",
+  middlewareController.verifyToken,
+  serverController.addServer
+);
+routerServer.get(
   "/:id",
   middlewareController.verifyToken,
   serverController.getServer
 );
-router.put(
+routerServer.put(
   "/:id",
   middlewareController.verifyToken,
   serverController.updateServer
 );
-router.delete(
+routerServer.delete(
   "/:id",
   middlewareController.verifyToken,
   serverController.deleteServer
 );
-export default router;
+export default routerServer;

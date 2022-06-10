@@ -1,29 +1,35 @@
-import userController from "../controller/userController";
-import {
-  verifyToken,
-  verifyPermissions,
-} from "../controller/middlewareController";
+import userController from "../controller/userController.js";
+import middlewareController from "../controller/middlewareController.js";
 import { Router } from "express";
 const routerUser = Router();
-routerUser.get("/", verifyToken, verifyPermissions, userController.getAllUser);
-routerUser.post("/", verifyToken, verifyPermissions, userController.addUser);
-routerUser.post(
-  "/login",
-  verifyToken,
-  verifyPermissions,
-  userController.handleLogin
+routerUser.get(
+  "/",
+  middlewareController.verifyToken,
+  middlewareController.verifyPermissions,
+  userController.getAllUser
 );
-routerUser.get("/:id", verifyToken, verifyPermissions, userController.getUser);
+routerUser.post(
+  "/",
+  middlewareController.verifyToken,
+  middlewareController.verifyPermissions,
+  userController.addUser
+);
+routerUser.get(
+  "/:id",
+  middlewareController.verifyToken,
+  middlewareController.verifyPermissions,
+  userController.getUser
+);
 routerUser.put(
   "/:id",
-  verifyToken,
-  verifyPermissions,
+  middlewareController.verifyToken,
+  middlewareController.verifyPermissions,
   userController.updateUser
 );
 routerUser.delete(
   "/:id",
-  verifyToken,
-  verifyPermissions,
+  middlewareController.verifyToken,
+  middlewareController.verifyPermissions,
   userController.deleteUser
 );
-module.exports = routerUser;
+export default routerUser;

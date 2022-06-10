@@ -1,4 +1,4 @@
-import Server from "../model/Server";
+import Server from "../model/Server.js";
 import jwt from "jsonwebtoken";
 const serverController = {
   getAllServer: async (req, res) => {
@@ -134,4 +134,4 @@ const serverController = {
   },
 };
 
-module.exports = userController;
+export default serverController;
