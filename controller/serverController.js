@@ -6,8 +6,8 @@ const serverController = {
       const PAGE_SIZE = parseInt(req.query.pageSize) || 3;
       const page = parseInt(req.query.page) < 1 ? 1 : parseInt(req.query.page);
       if (!page) {
-        const server = await User.find();
-        res.status(200).json(user);
+        const server = await Server.find();
+        res.status(200).json(server);
       } else {
         const server = await Server.find()
           .skip((page - 1) * PAGE_SIZE)
@@ -50,10 +50,9 @@ const serverController = {
     }
   },
   addServer: async (req, res) => {
-    console.log(req.body);
     try {
-      const newServer = new User(req.body);
-      const saveServer = await newServer.save();
+      const newServer = new Server(req.body);
+      await newServer.save();
       res.status(200).json("Successful");
     } catch (error) {
       res.status(500).json(error);
@@ -104,7 +103,7 @@ const serverController = {
 
   remoteSSH: async (req, res) => {
     try {
-      const user = await User.findOne({
+      const user = await Server.findOne({
         username: req.body.username,
         password: req.body.password,
       });
