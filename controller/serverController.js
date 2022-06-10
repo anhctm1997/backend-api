@@ -1,21 +1,10 @@
-const { Server } = require("../model/model");
-const jwt = require("jsonwebtoken");
+import Server from "../model/Server";
+import jwt from "jsonwebtoken";
 const serverController = {
   getAllServer: async (req, res) => {
     try {
       const PAGE_SIZE = parseInt(req.query.pageSize) || 3;
       const page = parseInt(req.query.page) < 1 ? 1 : parseInt(req.query.page);
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        // const isAdmin = await User.findById(id).permissions;
-        // if (!isAdmin)
-        //   return res.status(403).json({
-        //     message: "Access permission error",
-        //   });
-      }
       if (!page) {
         const server = await User.find();
         res.status(200).json(user);
@@ -42,17 +31,6 @@ const serverController = {
     try {
       const PAGE_SIZE = parseInt(req.query.pageSize) || 3;
       const page = parseInt(req.query.page) < 1 ? 1 : parseInt(req.query.page);
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        // const isAdmin = await User.findById(id).permissions;
-        // if (!isAdmin)
-        //   return res.status(403).json({
-        //     message: "Access permission error",
-        //   });
-      }
       const server = await Server.find()
         .sort(res.query)
         .skip((page - 1) * PAGE_SIZE)
@@ -74,17 +52,6 @@ const serverController = {
   addServer: async (req, res) => {
     console.log(req.body);
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        // const isAdmin = await User.findById(id).permissions;
-        // if (!isAdmin)
-        //   return res.status(403).json({
-        //     message: "Access permission error",
-        //   });
-      }
       const newServer = new User(req.body);
       const saveServer = await newServer.save();
       res.status(200).json("Successful");
@@ -94,17 +61,6 @@ const serverController = {
   },
   getServer: async (req, res) => {
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        // const isAdmin = await User.findById(id).permissions;
-        // if (!isAdmin)
-        //   return res.status(403).json({
-        //     message: "Access permission error",
-        //   });
-      }
       await Server.findById(req.params.id, (err, server) => {
         if (err) {
           res.status(404).json("ID not found");
@@ -118,17 +74,6 @@ const serverController = {
   },
   updateServer: async (req, res) => {
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        // const isAdmin = await User.findById(id).permissions;
-        // if (!isAdmin)
-        //   return res.status(403).json({
-        //     message: "Access permission error",
-        //   });
-      }
       const id = req.params.id;
       await User.findByIdAndUpdate(id, body, (err, server) => {
         if (err) {
@@ -145,17 +90,6 @@ const serverController = {
   deleteServer: async (req, res) => {
     // console.log(req.params.id);
     try {
-      const token = req.cookies.token;
-      if (!token) {
-        res.redirect(403, "/login");
-      } else {
-        //const id = jwt.verify(token, process.env.PRIVATE_KEY);
-        // const isAdmin = await User.findById(id).permissions;
-        // if (!isAdmin)
-        //   return res.status(403).json({
-        //     message: "Access permission error",
-        //   });
-      }
       await User.findByIdAndDelete(req.params.id, (err, res) => {
         if (err) {
           res.status(404).json("ID not found");
@@ -168,7 +102,7 @@ const serverController = {
     }
   },
 
-  remoteSSH: async (req, res, next) => {
+  remoteSSH: async (req, res) => {
     try {
       const user = await User.findOne({
         username: req.body.username,
@@ -180,7 +114,7 @@ const serverController = {
             _id: user._id,
             permissions: user.permissions,
           },
-          "anhcuongdeptrai"
+          process.env.PRIVATE_KEY
         );
         res.status(200).json({
           message: "Successfuly",

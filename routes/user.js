@@ -1,10 +1,29 @@
-const userController = require("../controller/userController");
-
-const router = require("express").Router();
-router.get("/", userController.getAllUser);
-router.post("/", userController.addUser);
-router.post("/login", userController.handleLogin);
-router.get("/:id", userController.getUser);
-router.put("/:id", userController.updateUser);
-router.delete("/:id", userController.deleteUser);
-module.exports = router;
+import userController from "../controller/userController";
+import {
+  verifyToken,
+  verifyPermissions,
+} from "../controller/middlewareController";
+import { Router } from "express";
+const routerUser = Router();
+routerUser.get("/", verifyToken, verifyPermissions, userController.getAllUser);
+routerUser.post("/", verifyToken, verifyPermissions, userController.addUser);
+routerUser.post(
+  "/login",
+  verifyToken,
+  verifyPermissions,
+  userController.handleLogin
+);
+routerUser.get("/:id", verifyToken, verifyPermissions, userController.getUser);
+routerUser.put(
+  "/:id",
+  verifyToken,
+  verifyPermissions,
+  userController.updateUser
+);
+routerUser.delete(
+  "/:id",
+  verifyToken,
+  verifyPermissions,
+  userController.deleteUser
+);
+module.exports = routerUser;

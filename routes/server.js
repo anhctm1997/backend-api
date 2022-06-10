@@ -1,9 +1,26 @@
-// const serverController = require("../controller/serverController");
-
-// const router = require("express").Router();
-// router.get("/", serverController.getAllServer);
-// router.post("/", serverController.addServer);
-// router.get("/:id", serverController.getServer);
-// router.put("/:id", serverController.updateServer);
-// router.delete("/:id", serverController.deleteServer);
-// module.exports = router;
+import serverController from "../controller/serverController";
+import { Router } from "express";
+import middlewareController from "../controller/middlewareController";
+const router = Router();
+router.get(
+  "/",
+  middlewareController.verifyToken,
+  serverController.getAllServer
+);
+router.post("/", middlewareController.verifyToken, serverController.addServer);
+router.get(
+  "/:id",
+  middlewareController.verifyToken,
+  serverController.getServer
+);
+router.put(
+  "/:id",
+  middlewareController.verifyToken,
+  serverController.updateServer
+);
+router.delete(
+  "/:id",
+  middlewareController.verifyToken,
+  serverController.deleteServer
+);
+export default router;
