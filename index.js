@@ -30,7 +30,7 @@ app.get("/", function (req, res) {
 });
 app.use("/api/auth", routerAuth);
 app.use("/api/server", routerServer);
-app.use("/api/user", routeUser);
+app.use("/api/user", routerUser);
 app.listen(PORT, () => {
   console.log(`Server is running...${PORT}`);
 });
