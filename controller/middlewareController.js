@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-// import { User } from "../model/model";
 const middlewareController = {
   verifyToken: (req, res, next) => {
     const token = req.headers.token;
