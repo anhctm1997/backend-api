@@ -1,4 +1,4 @@
-import User from "../model/User.js";
+import User from "../models/entity/User.js";
 import bcrypt from "bcryptjs/dist/bcrypt.js";
 const userController = {
   getAllUser: async (req, res) => {
@@ -6,7 +6,7 @@ const userController = {
       const PAGE_SIZE = parseInt(req.query.pageSize) || 3;
       const page = parseInt(req.query.page) < 1 ? 1 : parseInt(req.query.page);
       if (!page) {
-        const user = await User.find();
+        const user = await User.find(req.query);
         res.status(200).json(user);
       } else {
         const user = await User.find()

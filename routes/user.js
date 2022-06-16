@@ -4,31 +4,31 @@ import { Router } from "express";
 const routerUser = Router();
 routerUser.get(
   "/",
-  middlewareController.verifyToken,
   middlewareController.verifyPermissions,
   userController.getAllUser
 );
+routerUser.get(
+  "/find",
+  middlewareController.verifyPermissions,
+  userController.findUser
+);
 routerUser.post(
   "/",
-  middlewareController.verifyToken,
   middlewareController.verifyPermissions,
   userController.addUser
 );
 routerUser.get(
   "/:id",
-  middlewareController.verifyToken,
   middlewareController.verifyPermissions,
   userController.getUser
 );
 routerUser.put(
   "/:id",
-  middlewareController.verifyToken,
   middlewareController.verifyPermissions,
   userController.updateUser
 );
 routerUser.delete(
   "/:id",
-  middlewareController.verifyToken,
   middlewareController.verifyPermissions,
   userController.deleteUser
 );

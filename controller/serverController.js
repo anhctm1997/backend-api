@@ -1,4 +1,4 @@
-import Server from "../model/Server.js";
+import Server from "../models/Server.js";
 import jwt from "jsonwebtoken";
 const serverController = {
   getAllServer: async (req, res) => {

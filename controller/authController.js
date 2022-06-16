@@ -5,7 +5,7 @@ const authController = {
     return jwt.sign(
       {
         _id: user._id,
-        admin: user.admin,
+        permissions: user.permissions,
       },
       process.env.PRIVATE_KEY,
       {
@@ -17,7 +17,7 @@ const authController = {
     return jwt.sign(
       {
         _id: user._id,
-        admin: user.admin,
+        permissions: user.permissions,
       },
       process.env.RESET_KEY,
       {
@@ -47,7 +47,7 @@ const authController = {
         });
       } else {
         return res.status(404).json({
-          message: "Tai khoan hoac mat khau khong chinh xac",
+          message: "Username or password not found",
         });
       }
     } catch (error) {
